@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CargoStatus {
+  preparing
+  ready_for_loading
+  in_transit
+  delivered
+  cancelled
+}
+
+enum TruckStatus {
+  available
+  unavailable
+}
+
+model City {
+  id       Int    @id @default(autoincrement())
+  name     String
+  country  String
+  mapX     Float
+  mapY     Float
+
+  outgoingRoutes CityRoute[] @relation("RouteFromCity")
+  incomingRoutes CityRoute[] @relation("RouteToCity")
+  pickupCargo    Cargo[]     @relation("CargoPickupCity")
+  destinationCargo Cargo[]   @relation("CargoDestinationCity")
+  parkedTrucks   Truck[]     @relation("TruckParkingCity")
+  arrivingTrucks Truck[]     @relation("TruckArrivalCity")
+
+  @@unique([name, country])
+}
+
+model CityRoute {
+  id                Int  @id @default(autoincrement())
+  fromCityId        Int
+  toCityId          Int
+  distanceKm        Int
+  travelTimeMinutes Int
+
+  fromCity City @relation("RouteFromCity", fields: [fromCityId], references: [id], onDelete: Cascade)
+  toCity   City @relation("RouteToCity", fields: [toCityId], references: [id], onDelete: Cascade)
+
+  @@unique([fromCityId, toCityId])
+}
+
+model Cargo {
+  id                 Int         @id @default(autoincrement())
+  name               String
+  pickupCityId       Int
+  destinationCityId  Int
+  weightKg           Int
+  pickupWindowStart  DateTime
+  pickupWindowEnd    DateTime
+  deliveryWindowEnd  DateTime
+  status             CargoStatus @default(preparing)
+
+  pickupCity      City @relation("CargoPickupCity", fields: [pickupCityId], references: [id])
+  destinationCity City @relation("CargoDestinationCity", fields: [destinationCityId], references: [id])
+}
+
+model Truck {
+  id              Int         @id @default(autoincrement())
+  name            String
+  parkingCityId   Int
+  isMoving        Boolean     @default(false)
+  arrivalCityId   Int?
+  arrivalDatetime DateTime?
+  capacityKg      Int
+  status          TruckStatus @default(available)
+
+  parkingCity City  @relation("TruckParkingCity", fields: [parkingCityId], references: [id])
+  arrivalCity City? @relation("TruckArrivalCity", fields: [arrivalCityId], references: [id])
+}
+

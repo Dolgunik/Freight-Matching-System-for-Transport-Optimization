@@ -1,0 +1,555 @@
+:root {
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #17201d;
+  background: #eef3f1;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1440px, 100%);
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.top-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #53655e;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  color: #101816;
+  font-size: clamp(2rem, 3.2rem, 4rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: 1rem;
+}
+
+h3 {
+  margin-bottom: 4px;
+  font-size: 0.98rem;
+}
+
+.status-pill,
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #c4d2ca;
+  border-radius: 999px;
+  background: #fbfdfc;
+  color: #314139;
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+
+.status-pill.compact {
+  font-size: 0.78rem;
+  padding: 6px 9px;
+}
+
+.workspace-grid,
+.data-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.workspace-grid {
+  grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.8fr);
+  align-items: stretch;
+}
+
+.data-grid {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  margin-top: 16px;
+}
+
+.map-panel,
+.side-column,
+.city-cargo-panel,
+.data-grid > div,
+.selected-truck {
+  border: 1px solid #d3ded8;
+  border-radius: 8px;
+  background: #fbfdfc;
+  box-shadow: 0 12px 30px rgba(24, 36, 31, 0.07);
+}
+
+.map-panel,
+.city-cargo-panel,
+.data-grid > div,
+.selected-truck {
+  padding: 16px;
+}
+
+.city-cargo-panel {
+  margin-top: 16px;
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #21302b;
+  margin-bottom: 12px;
+}
+
+.panel-title .panel-title {
+  margin-bottom: 0;
+}
+
+.panel-title-between {
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.icon-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d3ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #314139;
+  cursor: pointer;
+}
+
+.icon-toggle:hover {
+  border-color: #d05a36;
+  background: #fff8f5;
+}
+
+.city-map {
+  min-height: 430px;
+}
+
+.city-map svg {
+  display: block;
+  width: 100%;
+  min-height: 430px;
+}
+
+.map-land {
+  fill: #dfe8e4;
+  stroke: #bccdc4;
+  stroke-width: 0.5;
+}
+
+.route-line {
+  stroke: #7c9188;
+  stroke-width: 0.65;
+  stroke-linecap: round;
+}
+
+.city-dot {
+  fill: #28544a;
+  stroke: #fbfdfc;
+  stroke-width: 0.8;
+}
+
+.city-dot.cargo {
+  fill: #2f7d66;
+}
+
+.city-dot.selected {
+  fill: #d05a36;
+  stroke: #ffffff;
+  stroke-width: 1.1;
+}
+
+.city-dot.focused {
+  stroke: #1f4fa3;
+  stroke-width: 1.25;
+}
+
+.city-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.city-node text {
+  fill: #15201c;
+  font-size: 3.2px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #f7fbf9;
+  stroke-width: 0.6px;
+}
+
+.truck-list,
+.cargo-list,
+.match-results,
+.city-explorer,
+.city-cargo-columns,
+.city-cargo-columns section {
+  display: grid;
+  gap: 10px;
+}
+
+.city-explorer {
+  grid-template-columns: minmax(220px, 0.35fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+.city-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+}
+
+.city-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  border: 1px solid #d3ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #26362f;
+  cursor: pointer;
+  font-weight: 750;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.city-button:hover,
+.city-button.selected {
+  border-color: #1f4fa3;
+  background: #f3f7ff;
+}
+
+.city-detail {
+  min-width: 0;
+}
+
+.city-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.city-detail-header p {
+  margin-bottom: 0;
+  color: #5e6f68;
+  font-size: 0.86rem;
+}
+
+.city-cargo-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.city-cargo-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #d7e1dc;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.city-cargo-card p,
+.city-cargo-meta {
+  color: #5e6f68;
+  font-size: 0.84rem;
+}
+
+.city-cargo-meta {
+  display: grid;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.city-cargo-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.truck-button {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  border: 1px solid #d3ded8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1e2c27;
+  cursor: pointer;
+  padding: 12px;
+  text-align: left;
+}
+
+.truck-button:hover,
+.truck-button.selected {
+  border-color: #d05a36;
+  background: #fff8f5;
+}
+
+.truck-button-main,
+.truck-button-sub,
+.meta-row,
+.result-card-header,
+.list-card-header,
+.result-times {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.truck-button-main,
+.list-card-header,
+.result-card-header {
+  justify-content: space-between;
+}
+
+.truck-button-sub,
+.meta-row,
+.result-times,
+.list-card p,
+.result-card p,
+.match-summary span {
+  color: #5e6f68;
+  font-size: 0.86rem;
+}
+
+.selected-truck {
+  margin-top: auto;
+}
+
+.truck-detail-grid {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 8px 12px;
+  margin-bottom: 14px;
+  font-size: 0.92rem;
+}
+
+.truck-detail-grid span {
+  color: #64756e;
+}
+
+.truck-detail-grid strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: #d05a36;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.primary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.list-card,
+.result-card {
+  border: 1px solid #d7e1dc;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.tag {
+  border-radius: 999px;
+  font-size: 0.72rem;
+  padding: 5px 8px;
+}
+
+.tag.success {
+  border-color: #aad4c1;
+  background: #eaf8f1;
+  color: #176243;
+}
+
+.tag.neutral {
+  border-color: #d7d5c4;
+  background: #fbfaee;
+  color: #625d2c;
+}
+
+.meta-row {
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.meta-row span,
+.result-times span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.match-summary {
+  display: grid;
+  gap: 3px;
+  border: 1px solid #bad7cb;
+  border-radius: 8px;
+  background: #f0faf5;
+  padding: 12px;
+}
+
+.result-section {
+  display: grid;
+  gap: 10px;
+}
+
+.result-section > h3 {
+  margin-bottom: 0;
+  color: #2d3c36;
+}
+
+.result-card.match {
+  border-color: #abd9bf;
+}
+
+.result-card.rejected {
+  border-color: #e3c0b4;
+}
+
+.result-card.match svg {
+  color: #1c7a51;
+}
+
+.result-card.rejected svg {
+  color: #b5492b;
+}
+
+.result-card ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  color: #314039;
+}
+
+.result-card li + li {
+  margin-top: 5px;
+}
+
+.result-times {
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.empty-state {
+  margin: 0;
+  border: 1px dashed #cbd9d2;
+  border-radius: 8px;
+  color: #667870;
+  padding: 14px;
+}
+
+.empty-state.compact {
+  padding: 10px;
+}
+
+.error-banner {
+  margin-bottom: 16px;
+  border: 1px solid #dfad9f;
+  border-radius: 8px;
+  background: #fff4f0;
+  color: #8c321a;
+  padding: 12px 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 980px) {
+  .workspace-grid,
+  .data-grid,
+  .city-explorer,
+  .city-cargo-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .side-column {
+    min-height: auto;
+  }
+
+  .selected-truck {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .app-shell {
+    padding: 16px;
+  }
+
+  .top-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 2.1rem;
+  }
+
+  .city-map,
+  .city-map svg {
+    min-height: 340px;
+  }
+}
