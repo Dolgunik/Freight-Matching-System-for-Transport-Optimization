@@ -54,7 +54,7 @@ The default backend `.env` expects:
 DATABASE_URL="postgresql://postgres@localhost:5433/freight_matching?schema=public"
 ```
 
-In this workspace, a local PostgreSQL data directory can be initialized and started with PowerShell:
+On Windows, PostgreSQL can be started manually as follows:
 
 ```powershell
 & 'C:\Program Files\PostgreSQL\18\bin\initdb.exe' -D '.\.pgdata' -A trust -U postgres -E UTF8
