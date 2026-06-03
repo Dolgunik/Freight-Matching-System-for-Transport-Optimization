@@ -1,3 +1,6 @@
+/**
+ * Formats full timestamps for global context, such as the fixed calculation time.
+ */
 export function formatDateTime(value) {
   if (!value) {
     return "n/a";
@@ -12,6 +15,9 @@ export function formatDateTime(value) {
   }).format(new Date(value));
 }
 
+/**
+ * Formats compact timestamps inside cargo and matching result rows.
+ */
 export function formatShortDateTime(value) {
   if (!value) {
     return "n/a";
@@ -24,4 +30,3 @@ export function formatShortDateTime(value) {
     minute: "2-digit"
   }).format(new Date(value));
 }
-

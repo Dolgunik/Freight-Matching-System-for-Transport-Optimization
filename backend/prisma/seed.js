@@ -24,6 +24,10 @@ const routeData = [
 
 const date = (value) => new Date(value);
 
+/**
+ * Recreates deterministic demo data used by the UI and automated tests.
+ * The cargo set intentionally includes repeatable cycles for Truck A.
+ */
 async function main() {
   await prisma.$executeRawUnsafe('TRUNCATE TABLE "Cargo", "Truck", "CityRoute", "City" RESTART IDENTITY CASCADE');
 

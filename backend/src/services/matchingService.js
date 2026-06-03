@@ -10,6 +10,10 @@ const addMinutes = (date, minutes) => new Date(date.getTime() + minutes * 60 * 1
 
 const iso = (date) => date.toISOString();
 
+/**
+ * Resolves where and when the truck can start matching.
+ * A moving truck starts from its planned arrival city and arrival time.
+ */
 const getEffectiveTruckState = (truck, now) => {
   if (truck.isMoving && truck.arrivalCity && truck.arrivalDatetime) {
     return {
@@ -24,6 +28,10 @@ const getEffectiveTruckState = (truck, now) => {
   };
 };
 
+/**
+ * Finds the fastest path through the static city route graph.
+ * This is a prototype route lookup, not a real road-routing engine.
+ */
 function findStaticRoute(fromCityId, toCityId, routes) {
   if (fromCityId === toCityId) {
     return {
@@ -81,6 +89,10 @@ function findStaticRoute(fromCityId, toCityId, routes) {
   return null;
 }
 
+/**
+ * Shapes one cargo feasibility result for the API response.
+ * The same payload format is reused for matches, rejections, and chain legs.
+ */
 function buildCargoPayload(cargo, routeToPickup, routeToDestination, pickupArrival, deliveryArrival, isMatch, reasons) {
   return {
     cargoId: cargo.id,
@@ -105,6 +117,10 @@ function buildCargoPayload(cargo, routeToPickup, routeToDestination, pickupArriv
   };
 }
 
+/**
+ * Checks whether a single cargo is feasible from a given truck city and time.
+ * Chain search sets requirePickupInCurrentCity so the next cargo must start at the previous destination.
+ */
 function evaluateCargoForState({
   cargo,
   truck,
@@ -190,6 +206,10 @@ function evaluateCargoForState({
   };
 }
 
+/**
+ * Converts a list of feasible cargo legs into the summary shown by the UI.
+ * A cycle means the last delivery returns to the first pickup city, so the same sequence can repeat.
+ */
 function buildChainSummary({ legs, startingCityId, visitedCityNames, hasCycle = false }) {
   const firstLeg = legs[0];
   const lastLeg = legs.at(-1);
@@ -223,6 +243,10 @@ function buildChainSummary({ legs, startingCityId, visitedCityNames, hasCycle = 
   };
 }
 
+/**
+ * Builds continuous cargo chains for a truck.
+ * The first leg must be available in the truck effective city; every next leg must start at the previous destination.
+ */
 function buildChains({ cargoItems, truck, effective, cityRoutes }) {
   const chains = [];
   const cycles = [];
@@ -333,6 +357,10 @@ function buildChains({ cargoItems, truck, effective, cityRoutes }) {
   };
 }
 
+/**
+ * Main service entry point used by GET /api/trucks/:id/matches.
+ * It returns single-cargo feasibility results plus the longer chain and repeatable-cycle views.
+ */
 export async function findMatchesForTruck(truckId) {
   const truck = await prisma.truck.findUnique({
     where: { id: truckId },

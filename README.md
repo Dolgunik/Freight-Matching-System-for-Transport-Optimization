@@ -2,15 +2,42 @@
 
 Small MVP for a thesis freight-matching prototype.
 
-The app shows Finnish cities, cargo, and trucks. A user selects one truck and asks the backend to find feasible cargo matches. The backend returns suitable cargo, rejected cargo with clear reasons, the longest continuous cargo chains, and repeatable cargo cycles.
+The app shows a static Finnish city network, trucks, cargo available in the selected city, and matching results for one selected truck. The backend checks single-cargo feasibility, builds continuous cargo chains, and detects repeatable cargo cycles.
 
-Project documentation: [docs/project-documentation.md](docs/project-documentation.md)
+Detailed documentation: [docs/project-documentation.md](docs/project-documentation.md)
 
 ## Stack
 
-- Backend: Node.js, Express, Prisma
+- Backend: Node.js, Express
+- ORM: Prisma
 - Database: PostgreSQL
 - Frontend: React, Vite
+- Tests: Vitest, Supertest, frontend production build
+
+## Current MVP
+
+Included:
+
+- static city map and static route network
+- city-focused cargo panel
+- truck list and truck selection
+- single-cargo feasibility check
+- longest continuous cargo chains
+- repeatable cargo cycle detection
+- rejected cargo reasons filtered by selected city
+- fixed calculation time for repeatable tests
+
+Not included:
+
+- login
+- real GPS
+- live map
+- payments
+- contracts
+- driver working hours
+- machine learning
+- real route calculation
+- full vehicle routing optimization
 
 ## Project Structure
 
@@ -20,98 +47,87 @@ backend/
     schema.prisma
     seed.js
   src/
+    app.js
     index.js
     prismaClient.js
+    config/
     routes/
     services/
+  tests/
+
 frontend/
   src/
-    App.jsx
     api.js
     components/
     pages/
+    utils/
+    styles.css
+
+docs/
+  project-documentation.md
+  testing-report.md
 ```
 
-## Local Setup
+## Local Run Commands
 
-1. Install backend dependencies:
+Use `npm.cmd` on Windows if PowerShell blocks `npm.ps1`.
 
-```bash
-cd backend
-npm install
-```
-
-2. Install frontend dependencies:
-
-```bash
-cd frontend
-npm install
-```
-
-3. Start PostgreSQL locally and create the database.
-
-The default backend `.env` expects:
-
-```text
-DATABASE_URL="postgresql://postgres@localhost:5433/freight_matching?schema=public"
-```
-
-On Windows, PostgreSQL can be started manually as follows:
+Start PostgreSQL from the project root:
 
 ```powershell
-& 'C:\Program Files\PostgreSQL\18\bin\initdb.exe' -D '.\.pgdata' -A trust -U postgres -E UTF8
-& 'C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe' -D '.\.pgdata' -l '.\.pgdata\postgres.log' -o '"-p 5433"' start
-& 'C:\Program Files\PostgreSQL\18\bin\createdb.exe' -h localhost -p 5433 -U postgres freight_matching
+& 'C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe' -D 'F:\ThesisProject\.pgdata' -l 'F:\ThesisProject\.pgdata\postgres.log' -o '"-p 5433"' start
 ```
 
-If `.pgdata` already exists, only run the `pg_ctl` command.
+Apply schema and seed data:
 
-4. Push the Prisma schema and seed data:
-
-```bash
-cd backend
-npm run db:push
-npm run db:seed
+```cmd
+cd /d F:\ThesisProject\backend
+npm.cmd run db:push
+npm.cmd run db:seed
 ```
 
-5. Start the backend:
+Start backend:
 
-```bash
-npm run dev
+```cmd
+cd /d F:\ThesisProject\backend
+npm.cmd run start
 ```
 
-6. Start the frontend:
+Start frontend:
 
-```bash
-cd frontend
-npm run dev
+```cmd
+cd /d F:\ThesisProject\frontend
+npm.cmd run dev
+```
+
+Open:
+
+```text
+http://127.0.0.1:5173
+```
+
+Stop PostgreSQL:
+
+```powershell
+& 'C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe' -D 'F:\ThesisProject\.pgdata' stop
 ```
 
 ## Testing
 
-The project includes automated backend API tests and a frontend production build check.
+Run all checks from the repository root:
 
-From the repository root:
-
-```bash
-npm test
+```cmd
+cd /d F:\ThesisProject
+npm.cmd test
 ```
 
-Backend tests reseed the local PostgreSQL database, then verify:
+This runs:
 
-- health endpoint and fixed calculation time
-- city list and Vaasa to Oulu static route
-- cargo visible for a selected city
-- successful Truck A matches, including Vaasa to Oulu
-- Truck A longest continuous chain and repeatable Vaasa cargo cycle
-- rejected cargo for unavailable Truck D
+1. backend seed reset
+2. backend API tests
+3. frontend production build
 
-You can also run only one side:
-
-```bash
-npm run test:backend
-npm run test:frontend
-```
+More details: [docs/testing-report.md](docs/testing-report.md)
 
 ## API
 
@@ -125,27 +141,3 @@ npm run test:frontend
 - `GET /api/routes`
 - `GET /api/trucks/:id/matches`
 
-## Scope
-
-Included:
-
-- Static city list and map coordinates
-- Cargo list
-- Truck list
-- Truck selection
-- Feasibility-based matching
-- Longest continuous cargo chains
-- Repeatable cargo cycle detection
-- Match and rejection reasons
-
-Not included:
-
-- Login
-- Real GPS
-- Live map
-- Payments
-- Contracts
-- Driver working hours
-- Machine learning
-- Real route calculation
-- Full vehicle routing optimization

@@ -4,6 +4,9 @@ import { formatShortDateTime } from "../utils/date.js";
 
 const getStatusLabel = (status) => (status === "ready_for_loading" ? "ready" : status);
 
+/**
+ * Compact one-line cargo row used for both outgoing and incoming city cargo.
+ */
 function CargoRow({ item, direction }) {
   return (
     <article className="list-card compact-cargo-row">
@@ -31,6 +34,10 @@ function CargoRow({ item, direction }) {
   );
 }
 
+/**
+ * Shows cargo related to the selected city.
+ * Outgoing cargo is listed separately from cargo delivered into the same city.
+ */
 export default function CargoList({ cargo, selectedCity, isLoading }) {
   if (isLoading) {
     return <p className="empty-state">Loading cargo...</p>;

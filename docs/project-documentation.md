@@ -1,102 +1,102 @@
-# Freight Matching System - Documentation
+# Freight Matching System - Project Documentation
 
-## 1. What This Project Is
+## 1. Project Purpose
 
 This project is a small MVP prototype for freight matching in road transport.
 
-The system helps check which cargo can be assigned to a selected truck. It does not solve a full logistics optimization problem. Instead, it demonstrates a simple and understandable feasibility check:
+The goal is to demonstrate the core idea of a freight-matching system without building a production logistics platform. A user selects one truck, checks cargo feasibility, and sees whether the truck can continue with cargo available in arrival cities.
 
-1. The user opens the web page.
-2. The system shows cities, cargo, trucks, and a static route network.
-3. The user selects one truck.
-4. The user clicks `Find matches`.
-5. The backend checks cargo feasibility and searches for continuous chains.
-6. The frontend shows the longest chains, repeatable cargo cycles, suitable cargo, and rejected cargo with reasons.
+The prototype focuses on:
 
-The prototype is made for thesis demonstration purposes. It shows the core idea without implementing production-level logistics features.
+- selecting a truck
+- viewing cargo by selected city
+- checking single-cargo feasibility
+- finding continuous cargo chains
+- detecting repeatable cargo cycles
+- explaining why cargo is accepted or rejected
 
 ## 2. Technology Stack
 
 | Part | Technology | Purpose |
 | --- | --- | --- |
-| Frontend | React | User interface |
-| Frontend tooling | Vite | Local development server and production build |
+| Frontend | React | One-page user interface |
+| Frontend tooling | Vite | Local dev server and production build |
 | UI icons | lucide-react | Interface icons |
 | Backend | Node.js | JavaScript runtime |
 | Backend framework | Express | REST API server |
 | ORM | Prisma | Database schema and database access |
 | Database | PostgreSQL | Stores cities, routes, cargo, and trucks |
-| Testing | Vitest | Backend test runner |
-| API testing | Supertest | Tests Express API endpoints |
+| Backend tests | Vitest | Test runner |
+| API tests | Supertest | Express endpoint testing |
 
 ## 3. Project Structure
 
 ```text
 freight-matching-prototype/
-│
-├── backend/
-│   ├── prisma/
-│   │   ├── schema.prisma
-│   │   └── seed.js
-│   ├── src/
-│   │   ├── app.js
-│   │   ├── index.js
-│   │   ├── prismaClient.js
-│   │   ├── config/
-│   │   │   └── time.js
-│   │   ├── routes/
-│   │   │   ├── cargo.js
-│   │   │   ├── cities.js
-│   │   │   ├── matches.js
-│   │   │   ├── routes.js
-│   │   │   └── trucks.js
-│   │   └── services/
-│   │       └── matchingService.js
-│   └── tests/
-│       └── api.test.js
-│
-├── frontend/
-│   ├── src/
-│   │   ├── App.jsx
-│   │   ├── api.js
-│   │   ├── main.jsx
-│   │   ├── styles.css
-│   │   ├── components/
-│   │   │   ├── CargoList.jsx
-│   │   │   ├── CityMap.jsx
-│   │   │   ├── MatchResults.jsx
-│   │   │   └── TruckList.jsx
-│   │   ├── pages/
-│   │   │   └── HomePage.jsx
-│   │   └── utils/
-│   │       └── date.js
-│   └── vite.config.js
-│
-├── docs/
-│   ├── project-documentation.md
-│   └── testing-report.md
-│
-├── package.json
-└── README.md
+  backend/
+    prisma/
+      schema.prisma
+      seed.js
+    src/
+      app.js
+      index.js
+      prismaClient.js
+      config/
+        time.js
+      routes/
+        cargo.js
+        cities.js
+        matches.js
+        routes.js
+        trucks.js
+      services/
+        matchingService.js
+    tests/
+      api.test.js
+
+  frontend/
+    src/
+      App.jsx
+      api.js
+      main.jsx
+      styles.css
+      components/
+        CargoList.jsx
+        CityMap.jsx
+        MatchResults.jsx
+        TruckList.jsx
+      pages/
+        HomePage.jsx
+      utils/
+        date.js
+    vite.config.js
+
+  docs/
+    project-documentation.md
+    testing-report.md
+
+  package.json
+  README.md
 ```
 
-## 4. Backend
+## 4. Backend Overview
 
 The backend is built with Node.js and Express.
 
-Main backend files:
+Important files:
 
 | File | Purpose |
 | --- | --- |
-| `backend/src/app.js` | Creates the Express application and connects API routes. |
-| `backend/src/index.js` | Starts the backend server on a port. |
-| `backend/src/prismaClient.js` | Creates the Prisma client used by routes and services. |
-| `backend/src/config/time.js` | Stores the fixed calculation time used by the prototype. |
-| `backend/src/services/matchingService.js` | Contains the freight matching logic. |
-| `backend/prisma/schema.prisma` | Defines the database structure. |
-| `backend/prisma/seed.js` | Fills the database with test data. |
+| `backend/src/app.js` | Creates the Express app and registers API routes. |
+| `backend/src/index.js` | Starts the backend server. |
+| `backend/src/config/time.js` | Provides the fixed matching reference time. |
+| `backend/src/prismaClient.js` | Creates the Prisma client. |
+| `backend/src/services/matchingService.js` | Contains feasibility, chain, and cycle logic. |
+| `backend/prisma/schema.prisma` | Defines the database models. |
+| `backend/prisma/seed.js` | Creates deterministic demo data. |
+| `backend/tests/api.test.js` | Verifies the main API behavior. |
 
-The backend runs by default on:
+Backend default URL:
 
 ```text
 http://localhost:4000
@@ -106,102 +106,93 @@ http://localhost:4000
 
 The database is PostgreSQL.
 
-In the local workspace, the database files are stored in:
+Local workspace database directory:
 
 ```text
 F:\ThesisProject\.pgdata
 ```
 
-This folder is local only and is ignored by Git.
-
-The connection string is stored in `backend/.env.example`:
+Connection string:
 
 ```text
-DATABASE_URL="postgresql://postgres@localhost:5433/freight_matching?schema=public"
+postgresql://postgres@localhost:5433/freight_matching?schema=public
 ```
 
-The database uses port:
+Main models:
 
-```text
-5433
-```
-
-### Main Tables
-
-| Table | Purpose |
+| Model | Purpose |
 | --- | --- |
-| `City` | Stores city names, country, and static map coordinates. |
-| `CityRoute` | Stores static routes between cities, distance, and travel time. |
-| `Cargo` | Stores cargo, pickup city, destination city, weight, time windows, and status. |
-| `Truck` | Stores trucks, location or arrival city, capacity, movement state, and status. |
+| `City` | City name, country, and static map coordinates. |
+| `CityRoute` | Static route between two cities, distance, and travel time. |
+| `Cargo` | Cargo name, pickup city, destination city, weight, windows, and status. |
+| `Truck` | Truck location, movement state, capacity, and availability. |
 
-The project does not store calculated matches in a database table. Matches are calculated live by the API and returned directly to the frontend.
+Calculated matches are not stored in the database. They are calculated live by the backend and returned to the frontend.
 
 ## 6. Seed Data
 
-The seed script creates test data for the prototype.
+The seed script creates deterministic data for demonstration and tests.
 
 Cities:
 
 - Vaasa
-- Seinäjoki
+- Seinajoki
 - Tampere
 - Helsinki
 - Turku
-- Jyväskylä
+- Jyvaskyla
 - Oulu
 
 Important routes:
 
-- Vaasa to Seinäjoki
-- Seinäjoki to Tampere
+- Vaasa to Seinajoki
+- Seinajoki to Tampere
 - Tampere to Helsinki
 - Tampere to Turku
-- Tampere to Jyväskylä
-- Jyväskylä to Oulu
+- Tampere to Jyvaskyla
+- Jyvaskyla to Oulu
 - Vaasa to Oulu
 
 Routes are created in both directions.
 
-Example cargo:
+Cargo examples:
 
 - Electronics pallets: Vaasa to Tampere
-- Furniture shipment: Tampere to Helsinki
-- Food delivery: Seinäjoki to Helsinki
-- Heavy machinery parts: Turku to Tampere
 - Northern medical supplies: Vaasa to Oulu
 - Book cartons: Tampere to Helsinki
 - Hospital supplies: Helsinki to Jyvaskyla
 - Paper reels: Jyvaskyla to Oulu
 - Return components: Oulu to Vaasa
-- Spare parts: Turku to Vaasa
+- Heavy machinery parts: Turku to Tampere
 
-The extended seed data creates a demonstrable repeatable cargo cycle:
-
-```text
-Vaasa -> Tampere -> Helsinki -> Jyvaskyla -> Oulu -> Vaasa
-```
-
-Example trucks:
+Truck examples:
 
 - Truck A: parked in Vaasa, available
 - Truck B: moving to Tampere, available
 - Truck C: parked in Turku, available
 - Truck D: parked in Helsinki, unavailable
 
+The data includes this repeatable cargo cycle:
+
+```text
+Vaasa -> Tampere -> Helsinki -> Jyvaskyla -> Oulu -> Vaasa
+```
+
+When the truck returns to Vaasa, the first cargo in the sequence can be taken again.
+
 ## 7. API Endpoints
 
 | Endpoint | Method | Purpose |
 | --- | --- | --- |
-| `/api/health` | GET | Checks if backend is running and returns fixed calculation time. |
+| `/api/health` | GET | Checks backend status and returns fixed calculation time. |
 | `/api/cities` | GET | Returns all cities. |
-| `/api/cities/:id/details` | GET | Returns one city with related routes, cargo, and parked trucks. |
+| `/api/cities/:id/details` | GET | Returns one city with routes, cargo, and parked trucks. |
 | `/api/cargo` | GET | Returns all cargo. |
 | `/api/cargo` | POST | Creates new cargo. |
 | `/api/trucks` | GET | Returns all trucks. |
 | `/api/trucks` | POST | Creates a new truck. |
-| `/api/routes` | GET | Returns static city routes. |
-| `/api/trucks/:id/matches` | GET | Calculates cargo matches for one truck. |
+| `/api/routes` | GET | Returns all static city routes. |
+| `/api/trucks/:id/matches` | GET | Calculates matching results for one truck. |
 
 ## 8. Matching Logic
 
@@ -211,73 +202,112 @@ Matching is implemented in:
 backend/src/services/matchingService.js
 ```
 
-The matching logic checks:
+The backend first resolves the truck effective state:
 
-1. Truck status.
-2. Cargo status.
-3. Truck capacity.
-4. Truck effective city and effective time.
-5. Travel time from truck location to pickup city.
-6. Pickup time window.
-7. Travel time from pickup city to destination city.
-8. Delivery time window.
+- parked truck: starts from parking city at the fixed calculation time
+- moving truck: starts from arrival city at arrival time
 
-The system returns four result groups:
+Single cargo feasibility checks:
 
-- `matches`: cargo that can be transported by the selected truck.
-- `rejected`: cargo that failed one or more checks.
-- `longestChains`: the longest continuous cargo chains found for the selected truck.
-- `cycles`: continuous chains that return to the first pickup city, where the same first cargo can start the same sequence again.
+1. Truck status must be `available`.
+2. Cargo status must be `ready_for_loading`.
+3. Truck capacity must be greater than or equal to cargo weight.
+4. Static route to pickup city must exist.
+5. Truck must reach pickup city before pickup window closes.
+6. Static route to destination city must exist.
+7. Delivery must happen before delivery window closes.
 
-Each result includes reasons, for example:
+The API returns:
 
-- `Cargo is ready for loading`
-- `Truck capacity is sufficient`
-- `Truck can reach pickup city before pickup window closes`
-- `Truck can deliver cargo before delivery window closes`
-- `Truck status is not available`
-- `Cargo status is not ready_for_loading`
+- `matches`: all single cargo items feasible for the selected truck
+- `rejected`: all single cargo items that failed one or more checks
+- `longestChains`: continuous cargo chains from the truck effective city
+- `cycles`: repeatable cargo cycles
 
-For a continuous chain, every next cargo must be picked up in the city where the previous cargo was delivered. The first cargo in a chain must be available in the truck's effective city. This demonstrates the main optimization idea of the prototype: reducing empty waiting by checking whether the truck can immediately take another suitable cargo at the arrival city.
+## 9. Continuous Chains
 
-A cycle is not defined as simply visiting the same city twice. A cycle is defined as a repeatable cargo sequence: the truck returns to the first pickup city, so the first cargo in the sequence can be taken again and the same pattern can continue.
+A continuous chain is a sequence of cargo legs.
 
-The route check uses the static route network from the database. It can use multiple static route segments, but it is still a simple prototype check, not full vehicle routing optimization.
+Rules:
 
-## 9. Frontend
+- The first cargo must be available in the truck effective city.
+- Every next cargo must be picked up in the city where the previous cargo was delivered.
+- The search is limited by `MAX_CHAIN_DEPTH` to keep the prototype small and predictable.
+- The UI shows the longest chains first.
 
-The frontend is built with React and Vite.
+This is not full vehicle routing optimization. It is a simple feasibility and continuation check.
 
-Main frontend files:
+## 10. Repeatable Cycles
+
+A cycle is not defined as "the truck visited any previous city".
+
+In this prototype, a cycle means:
+
+1. The truck starts a cargo chain from a pickup city.
+2. The chain eventually returns to that same first pickup city.
+3. The same first cargo can be taken again, so the sequence is repeatable.
+
+Example:
+
+```text
+Electronics pallets: Vaasa -> Tampere
+Book cartons: Tampere -> Helsinki
+Hospital supplies: Helsinki -> Jyvaskyla
+Paper reels: Jyvaskyla -> Oulu
+Return components: Oulu -> Vaasa
+```
+
+After the last leg, the truck is back in Vaasa and can start with Electronics pallets again.
+
+## 11. Frontend Overview
+
+The frontend is a one-page React app.
+
+Important files:
 
 | File | Purpose |
 | --- | --- |
-| `frontend/src/pages/HomePage.jsx` | Main page and user workflow. |
-| `frontend/src/api.js` | API calls to the backend. |
-| `frontend/src/components/CityMap.jsx` | Static city map and route visualization. |
+| `frontend/src/pages/HomePage.jsx` | Main workflow and shared page state. |
+| `frontend/src/api.js` | Backend API wrapper. |
+| `frontend/src/components/CityMap.jsx` | Static city map and city selection. |
 | `frontend/src/components/TruckList.jsx` | Truck selection. |
-| `frontend/src/components/CargoList.jsx` | Selected city cargo list with available-from and delivered-to sections. |
-| `frontend/src/components/MatchResults.jsx` | Longest chains, repeatable cycles, suitable cargo, and rejected cargo results. |
-| `frontend/src/utils/date.js` | Date and time formatting. |
+| `frontend/src/components/CargoList.jsx` | Cargo for the selected city. |
+| `frontend/src/components/MatchResults.jsx` | Chains, cycles, single matches, and rejected cargo. |
+| `frontend/src/utils/date.js` | Date formatting helpers. |
+| `frontend/src/styles.css` | Application styling. |
 
-The frontend runs by default on:
+Frontend default URL:
 
 ```text
 http://127.0.0.1:5173
 ```
 
-## 10. User Workflow
+## 12. User Interface Behavior
 
-```mermaid
-flowchart TD
-  A["User opens frontend"] --> B["Frontend loads cities, cargo, trucks, and routes"]
-  B --> C["User selects a truck"]
-  C --> D["User clicks Find matches"]
-  D --> E["Backend checks cargo feasibility"]
-  E --> F["Frontend shows longest chains, repeatable cycles, suitable cargo, and rejected cargo"]
-```
+The page contains:
 
-## 11. Fixed Calculation Time
+- static city map
+- truck list
+- selected truck details
+- selected city cargo panel
+- matching results panel
+
+City cargo panel:
+
+- The panel title shows the selected city, for example `Vaasa cargo`.
+- `Available from this city` shows cargo where selected city is the pickup city.
+- `Delivered to this city` shows cargo where selected city is the destination city.
+- Clicking a city on the map changes this panel.
+- Selecting a truck changes this panel to the truck effective city.
+
+Matching results panel:
+
+- `Longest cargo chains` shows continuous chains.
+- `Detected cycles` shows repeatable cargo cycles.
+- `Single suitable cargo` shows single cargo feasible for the selected truck.
+- `Rejected cargo from <city>` shows only rejected cargo whose pickup city is the selected city.
+
+## 13. Fixed Calculation Time
 
 The prototype uses a fixed calculation time so results are repeatable.
 
@@ -287,58 +317,44 @@ Configured value:
 2026-05-21T09:00:00+03:00
 ```
 
-In UTC this is returned as:
+API UTC value:
 
 ```text
 2026-05-21T06:00:00.000Z
 ```
 
-The frontend displays it in local time for the user.
+The frontend displays this as local time.
 
-This makes testing and thesis reporting easier because matching results do not change depending on the real current time.
+## 14. How To Run Locally
 
-## 12. How To Run Locally
+Use `npm.cmd` on Windows if PowerShell blocks `npm.ps1`.
 
-Install backend dependencies:
-
-```bash
-cd backend
-npm install
-```
-
-Install frontend dependencies:
-
-```bash
-cd frontend
-npm install
-```
-
-Start PostgreSQL from the project root:
+Start PostgreSQL:
 
 ```powershell
 & 'C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe' -D 'F:\ThesisProject\.pgdata' -l 'F:\ThesisProject\.pgdata\postgres.log' -o '"-p 5433"' start
 ```
 
-Apply schema and seed data:
+Apply schema and seed:
 
-```bash
-cd backend
-npm run db:push
-npm run db:seed
+```cmd
+cd /d F:\ThesisProject\backend
+npm.cmd run db:push
+npm.cmd run db:seed
 ```
 
 Start backend:
 
-```bash
-cd backend
-npm run dev
+```cmd
+cd /d F:\ThesisProject\backend
+npm.cmd run start
 ```
 
 Start frontend:
 
-```bash
-cd frontend
-npm run dev
+```cmd
+cd /d F:\ThesisProject\frontend
+npm.cmd run dev
 ```
 
 Open:
@@ -347,14 +363,19 @@ Open:
 http://127.0.0.1:5173
 ```
 
-## 13. Testing
+Stop PostgreSQL:
 
-The project has automated tests for the MVP behavior.
+```powershell
+& 'C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe' -D 'F:\ThesisProject\.pgdata' stop
+```
 
-Run all checks from the project root:
+## 15. Testing
 
-```bash
-npm test
+Run all checks from the repository root:
+
+```cmd
+cd /d F:\ThesisProject
+npm.cmd test
 ```
 
 This command runs:
@@ -363,35 +384,26 @@ This command runs:
 2. Backend API tests.
 3. Frontend production build.
 
-The backend tests check:
-
-- health endpoint
-- fixed calculation time
-- city list
-- Vaasa to Oulu route
-- city details with cargo
-- Truck A matching logic, longest chain, and repeatable cycle detection
-- Truck D rejection logic
-
-More details are in:
+More details:
 
 ```text
 docs/testing-report.md
 ```
 
-## 14. What Is Not Included
+## 16. Limitations
 
 The project intentionally does not include:
 
-- login
+- authentication
 - real GPS
 - live map
-- payments
+- payment flow
 - contracts
 - driver working hours
 - machine learning
-- real route calculation
+- real road routing
 - full vehicle routing optimization
 - production deployment
 
-These limitations keep the project focused on the thesis MVP: demonstrating the freight matching concept with a small working prototype.
+These limitations keep the project focused on the thesis MVP.
+

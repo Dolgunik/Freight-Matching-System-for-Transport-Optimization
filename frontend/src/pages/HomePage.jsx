@@ -24,6 +24,9 @@ export default function HomePage() {
   useEffect(() => {
     let isMounted = true;
 
+    /**
+     * Loads all reference data needed for the one-page prototype.
+     */
     async function loadData() {
       try {
         setIsLoading(true);
@@ -77,6 +80,9 @@ export default function HomePage() {
     [routes, selectedCityId]
   );
 
+  /**
+   * Truck selection also focuses the city cargo panel on the truck's effective city.
+   */
   const handleSelectTruck = (truckId) => {
     const truck = trucks.find((item) => item.id === truckId);
 
@@ -85,6 +91,9 @@ export default function HomePage() {
     setMatchResults(null);
   };
 
+  /**
+   * Runs the backend matching workflow for the currently selected truck.
+   */
   const handleFindMatches = async () => {
     if (!selectedTruckId) {
       return;

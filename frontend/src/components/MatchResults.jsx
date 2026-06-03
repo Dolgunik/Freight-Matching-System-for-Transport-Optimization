@@ -17,6 +17,9 @@ const formatDuration = (minutes) => {
   return `${hours}h ${remainingMinutes}m`;
 };
 
+/**
+ * Displays one continuous chain or repeatable cargo cycle returned by the backend.
+ */
 function ChainCard({ chain, variant }) {
   const Icon = variant === "cycle" ? RefreshCw : Link2;
   const cycleLabel = chain.cycleStartsWithCargoName
@@ -58,6 +61,9 @@ function ChainCard({ chain, variant }) {
   );
 }
 
+/**
+ * Displays one single-cargo match or rejection with backend reasons.
+ */
 function ResultCard({ item, variant }) {
   const Icon = variant === "match" ? CheckCircle2 : XCircle;
 
@@ -79,6 +85,9 @@ function ResultCard({ item, variant }) {
   );
 }
 
+/**
+ * Renders backend matching output and keeps rejected cargo scoped to the selected city.
+ */
 export default function MatchResults({ results, selectedCity, isLoading }) {
   if (isLoading) {
     return <p className="empty-state">Checking feasible cargo...</p>;

@@ -1,5 +1,8 @@
 import { CircleCheck, CircleOff, Navigation } from "lucide-react";
 
+/**
+ * Lists trucks and forwards the selected truck id to the page-level workflow.
+ */
 export default function TruckList({ trucks, selectedTruckId, onSelectTruck, isLoading }) {
   if (isLoading) {
     return <p className="empty-state">Loading trucks...</p>;
@@ -37,4 +40,3 @@ export default function TruckList({ trucks, selectedTruckId, onSelectTruck, isLo
     </div>
   );
 }
-

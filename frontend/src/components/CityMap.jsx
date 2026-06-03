@@ -1,3 +1,6 @@
+/**
+ * Renders the static city graph and lets the user choose the city used by the cargo panel.
+ */
 export default function CityMap({ cities, routes, selectedTruck, cargo, selectedCityId, onSelectCity }) {
   const cityById = new Map(cities.map((city) => [city.id, city]));
   const selectedTruckCityId = selectedTruck?.isMoving
