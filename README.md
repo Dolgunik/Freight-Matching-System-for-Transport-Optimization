@@ -2,7 +2,9 @@
 
 Small MVP for a thesis freight-matching prototype.
 
-The app shows Finnish cities, cargo, and trucks. A user selects one truck and asks the backend to find feasible cargo matches. The backend returns suitable cargo and rejected cargo with clear reasons.
+The app shows Finnish cities, cargo, and trucks. A user selects one truck and asks the backend to find feasible cargo matches. The backend returns suitable cargo, rejected cargo with clear reasons, the longest continuous cargo chains, and repeatable cargo cycles.
+
+Project documentation: [docs/project-documentation.md](docs/project-documentation.md)
 
 ## Stack
 
@@ -101,6 +103,7 @@ Backend tests reseed the local PostgreSQL database, then verify:
 - city list and Vaasa to Oulu static route
 - cargo visible for a selected city
 - successful Truck A matches, including Vaasa to Oulu
+- Truck A longest continuous chain and repeatable Vaasa cargo cycle
 - rejected cargo for unavailable Truck D
 
 You can also run only one side:
@@ -131,6 +134,8 @@ Included:
 - Truck list
 - Truck selection
 - Feasibility-based matching
+- Longest continuous cargo chains
+- Repeatable cargo cycle detection
 - Match and rejection reasons
 
 Not included:

@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Box, CalendarClock, ChevronDown, ChevronRight, MapPinned, RefreshCw, Search, Truck } from "lucide-react";
+import { ArrowRight, Box, CalendarClock, MapPinned, RefreshCw, Route, Search, Truck } from "lucide-react";
 
 import { api } from "../api.js";
 import CargoList from "../components/CargoList.jsx";
-import CityCargoExplorer from "../components/CityCargoExplorer.jsx";
 import CityMap from "../components/CityMap.jsx";
 import MatchResults from "../components/MatchResults.jsx";
 import TruckList from "../components/TruckList.jsx";
@@ -17,7 +16,6 @@ export default function HomePage() {
   const [systemInfo, setSystemInfo] = useState(null);
   const [selectedTruckId, setSelectedTruckId] = useState(null);
   const [selectedCityId, setSelectedCityId] = useState(null);
-  const [isCityExplorerOpen, setIsCityExplorerOpen] = useState(true);
   const [matchResults, setMatchResults] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isMatching, setIsMatching] = useState(false);
@@ -70,9 +68,20 @@ export default function HomePage() {
     () => trucks.find((truck) => truck.id === selectedTruckId) ?? null,
     [selectedTruckId, trucks]
   );
+  const selectedCity = useMemo(
+    () => cities.find((city) => city.id === selectedCityId) ?? null,
+    [cities, selectedCityId]
+  );
+  const selectedCityRoutes = useMemo(
+    () => routes.filter((route) => route.fromCityId === selectedCityId),
+    [routes, selectedCityId]
+  );
 
   const handleSelectTruck = (truckId) => {
+    const truck = trucks.find((item) => item.id === truckId);
+
     setSelectedTruckId(truckId);
+    setSelectedCityId(truck?.isMoving ? truck.arrivalCityId : truck?.parkingCityId ?? null);
     setMatchResults(null);
   };
 
@@ -176,45 +185,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="city-cargo-panel">
-        <div className="panel-title panel-title-between">
-          <div className="panel-title">
-            <MapPinned size={18} aria-hidden="true" />
-            <h2>Cities and cargo by city</h2>
-          </div>
-          <button
-            type="button"
-            className="icon-toggle"
-            aria-label={isCityExplorerOpen ? "Collapse city cargo" : "Expand city cargo"}
-            aria-expanded={isCityExplorerOpen}
-            onClick={() => setIsCityExplorerOpen((current) => !current)}
-          >
-            {isCityExplorerOpen ? (
-              <ChevronDown size={20} aria-hidden="true" />
-            ) : (
-              <ChevronRight size={20} aria-hidden="true" />
-            )}
-          </button>
-        </div>
-        {isCityExplorerOpen ? (
-          <CityCargoExplorer
-            cities={cities}
-            cargo={cargo}
-            routes={routes}
-            selectedCityId={selectedCityId}
-            onSelectCity={setSelectedCityId}
-            isLoading={isLoading}
-          />
-        ) : null}
-      </section>
-
       <section className="data-grid">
         <div>
-          <div className="panel-title">
-            <Box size={18} aria-hidden="true" />
-            <h2>Cargo</h2>
+          <div className="panel-title panel-title-between">
+            <div className="panel-title">
+              <Box size={18} aria-hidden="true" />
+              <h2>{selectedCity ? `${selectedCity.name} cargo` : "Cargo"}</h2>
+            </div>
+            {selectedCity ? (
+              <span className="status-pill compact">
+                <Route size={15} aria-hidden="true" />
+                {selectedCityRoutes.length} routes
+              </span>
+            ) : null}
           </div>
-          <CargoList cargo={cargo} isLoading={isLoading} />
+          <CargoList cargo={cargo} selectedCity={selectedCity} isLoading={isLoading} />
         </div>
 
         <div>
@@ -222,7 +207,7 @@ export default function HomePage() {
             <ArrowRight size={18} aria-hidden="true" />
             <h2>Matching results</h2>
           </div>
-          <MatchResults results={matchResults} isLoading={isMatching} />
+          <MatchResults results={matchResults} selectedCity={selectedCity} isLoading={isMatching} />
         </div>
       </section>
     </main>

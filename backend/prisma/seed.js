@@ -104,6 +104,56 @@ async function main() {
         pickupWindowEnd: date("2026-05-21T16:30:00+03:00"),
         deliveryWindowEnd: date("2026-05-21T22:00:00+03:00"),
         status: "ready_for_loading"
+      },
+      {
+        name: "Book cartons",
+        pickupCityId: cities.Tampere.id,
+        destinationCityId: cities.Helsinki.id,
+        weightKg: 4000,
+        pickupWindowStart: date("2026-05-21T13:30:00+03:00"),
+        pickupWindowEnd: date("2026-05-21T18:30:00+03:00"),
+        deliveryWindowEnd: date("2026-05-21T23:00:00+03:00"),
+        status: "ready_for_loading"
+      },
+      {
+        name: "Hospital supplies",
+        pickupCityId: cities.Helsinki.id,
+        destinationCityId: cities["Jyväskylä"].id,
+        weightKg: 3500,
+        pickupWindowStart: date("2026-05-21T16:00:00+03:00"),
+        pickupWindowEnd: date("2026-05-21T20:00:00+03:00"),
+        deliveryWindowEnd: date("2026-05-22T01:00:00+03:00"),
+        status: "ready_for_loading"
+      },
+      {
+        name: "Paper reels",
+        pickupCityId: cities["Jyväskylä"].id,
+        destinationCityId: cities.Oulu.id,
+        weightKg: 5000,
+        pickupWindowStart: date("2026-05-21T19:30:00+03:00"),
+        pickupWindowEnd: date("2026-05-21T23:00:00+03:00"),
+        deliveryWindowEnd: date("2026-05-22T04:00:00+03:00"),
+        status: "ready_for_loading"
+      },
+      {
+        name: "Return components",
+        pickupCityId: cities.Oulu.id,
+        destinationCityId: cities.Vaasa.id,
+        weightKg: 4500,
+        pickupWindowStart: date("2026-05-21T23:30:00+03:00"),
+        pickupWindowEnd: date("2026-05-22T02:00:00+03:00"),
+        deliveryWindowEnd: date("2026-05-22T07:00:00+03:00"),
+        status: "ready_for_loading"
+      },
+      {
+        name: "Spare parts",
+        pickupCityId: cities.Turku.id,
+        destinationCityId: cities.Vaasa.id,
+        weightKg: 6000,
+        pickupWindowStart: date("2026-05-21T11:00:00+03:00"),
+        pickupWindowEnd: date("2026-05-21T19:00:00+03:00"),
+        deliveryWindowEnd: date("2026-05-22T03:00:00+03:00"),
+        status: "ready_for_loading"
       }
     ]
   });

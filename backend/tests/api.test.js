@@ -91,6 +91,29 @@ describe("Freight matching API", () => {
         })
       ])
     );
+    expect(response.body.longestChains[0]).toMatchObject({
+      cargoCount: 5,
+      cityPath: ["Vaasa", "Tampere", "Helsinki", "Jyväskylä", "Oulu", "Vaasa"],
+      hasCycle: true,
+      cycleCity: "Vaasa",
+      cycleStartsWithCargoName: "Electronics pallets"
+    });
+    expect(response.body.longestChains[0].legs.map((leg) => leg.cargoName)).toEqual([
+      "Electronics pallets",
+      "Book cartons",
+      "Hospital supplies",
+      "Paper reels",
+      "Return components"
+    ]);
+    expect(response.body.cycles).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          cargoCount: 5,
+          cycleCity: "Vaasa",
+          cycleStartsWithCargoName: "Electronics pallets"
+        })
+      ])
+    );
     expect(response.body.rejected.map((rejection) => rejection.cargoName)).toEqual(
       expect.arrayContaining(["Furniture shipment", "Heavy machinery parts"])
     );
@@ -108,4 +131,3 @@ describe("Freight matching API", () => {
     expect(response.body.rejected[0].reasons).toContain("Truck status is not available");
   });
 });
-
